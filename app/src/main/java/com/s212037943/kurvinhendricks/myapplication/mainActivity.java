@@ -1,6 +1,7 @@
 package com.s212037943.kurvinhendricks.myapplication;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -11,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ShareActionProvider;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -24,6 +26,7 @@ public class mainActivity extends Activity implements View.OnClickListener, Adap
     ListView mainListView;
     ArrayAdapter mArrayAdapter;
     ArrayList mNameList = new ArrayList();
+    ShareActionProvider mShareActionProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,10 +57,29 @@ public class mainActivity extends Activity implements View.OnClickListener, Adap
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        MenuItem shareItem = menu.findItem(R.id.menu_item_share);
+
+        if(shareItem != null){
+            mShareActionProvider = (ShareActionProvider)shareItem.getActionProvider();
+        }
+
+        setShareIntent();
+
         return true;
     }
 
-    @Override
+    private void setShareIntent() {
+        if(mShareActionProvider != null){
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Android Development");
+            shareIntent.putExtra(Intent.EXTRA_TEXT, mainTextView.getText());
+
+            mShareActionProvider.setShareIntent(shareIntent);
+        }
+    }
+
+    /*@Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -67,7 +89,7 @@ public class mainActivity extends Activity implements View.OnClickListener, Adap
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
     @Override
     public void onClick(View v) {
@@ -77,6 +99,7 @@ public class mainActivity extends Activity implements View.OnClickListener, Adap
         mNameList.add(mainEditText.getText().toString());
         mArrayAdapter.notifyDataSetChanged();
 
+        setShareIntent();
     }
 
     @Override
